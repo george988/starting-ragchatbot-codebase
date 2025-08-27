@@ -1,0 +1,102 @@
+Course Materials RAG System - Flow Diagram
+==============================================
+
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   Web Browser   │    │   FastAPI App    │    │  Document Store │
+│  (Frontend UI)  │    │   (Backend)      │    │    (/docs/)     │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+         │                        │                       │
+         │ 1. User Query          │                       │
+         ├──────────────────────→ │                       │
+         │                        │                       │
+         │                        │ 2. Load & Process     │
+         │                        │    Documents          │
+         │                        ├─────────────────────→ │
+         │                        │                       │
+         │                        │ ← course scripts      │
+         │                        │   (course1-4.txt)     │
+         │                        │                       │
+┌─────────────────┐               │                       │
+│  Session Store  │               │ 3. Document Processing│
+│   (In Memory)   │               │    & Chunking         │
+└─────────────────┘               ▼                       │
+         ▲                ┌──────────────────┐            │
+         │                │ Document         │            │
+         │                │ Processor        │            │
+         │                └──────────────────┘            │
+         │                        │                       │
+         │                        ▼                       │
+         │                ┌──────────────────┐            │
+         │                │ Sentence         │            │
+         │                │ Transformers     │            │
+         │                │ (Embeddings)     │            │
+         │                └──────────────────┘            │
+         │                        │                       │
+         │                        ▼                       │
+         │                ┌──────────────────┐            │
+         │                │   ChromaDB       │◄───────────┘
+         │                │ (Vector Store)   │
+         │                └──────────────────┘
+         │                        │
+         │                        │ 4. Semantic Search
+         │                        │    (similarity)
+         │                        ▼
+         │                ┌──────────────────┐
+         │                │  Search Tools    │
+         │                │ (retrieve docs)  │
+         │                └──────────────────┘
+         │                        │
+         │                        │ 5. Retrieved Context
+         │                        ▼
+         │                ┌──────────────────┐
+         │                │   RAG System     │
+         │                │  (Orchestrator)  │
+         │                └──────────────────┘
+         │                        │
+         │ 6. Session Context     │ 7. Generate Response
+         │                        ▼
+         └──────────────────── ┌──────────────────┐
+                              │  AI Generator    │
+                              │ (Anthropic       │
+                              │  Claude API)     │
+                              └──────────────────┘
+                                       │
+                                       │ 8. AI Response
+                                       ▼
+         ┌─────────────────┐    ┌──────────────────┐
+         │   Web Browser   │    │   FastAPI App    │
+         │  (Frontend UI)  │ ◄──┤   (Backend)      │
+         └─────────────────┘    └──────────────────┘
+                │                       │
+                │ 9. Display Answer      │
+                │    + Sources           │
+                ▼                       │
+         ┌─────────────────┐           │
+         │  Chat Interface │           │
+         │  - Answer       │           │
+         │  - Sources      │           │
+         │  - Course Stats │◄──────────┘
+         └─────────────────┘    10. Course Analytics
+
+
+Data Flow Legend:
+================
+1. User submits query via web interface
+2. App loads course documents from /docs/ folder
+3. Documents are chunked and embedded using sentence-transformers
+4. Query embedding compared to document embeddings in ChromaDB
+5. Most relevant document chunks retrieved as context
+6. Previous conversation context retrieved from session manager
+7. Context + query sent to Claude API for response generation
+8. Claude returns AI-generated answer
+9. Response returned to frontend with source citations
+10. Course statistics displayed in sidebar
+
+Key Technologies:
+================
+• Frontend: HTML/CSS/JavaScript with marked.js for markdown
+• Backend: FastAPI with Python 3.13+
+• Vector DB: ChromaDB for similarity search
+• Embeddings: sentence-transformers library
+• AI Generation: Anthropic Claude API
+• Session Management: In-memory storage
